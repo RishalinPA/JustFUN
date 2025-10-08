@@ -18,11 +18,10 @@ program wh3d
 	real(8), parameter :: j = (0.0d0, 1.0d0)
 	integer(4) :: int1, int2
 	
-	!call cpu_time(startTime)
 	call system_clock(int1)
-	r_source = 20!nint(real(nr-1)/2)
-	z_source = 250!nint(real(nz-1)/2)
-	print *, 'source:', r_source*dr, z_source*dz!, 'and', r_source*dr+Ra, z_source*dz
+	r_source = 20
+	z_source = 250
+	print *, 'source:', r_source*dr, z_source*dz
 	
 	!Из Куранта. В цилиндрических без зависимости от фи
 	
@@ -35,9 +34,9 @@ program wh3d
 	allocate(jr(0:nr-1, 0:nz-1), jphi(0:nr-1, 0:nz-1), jz(0:nr-1, 0:nz-1), sigma_0(0:nr-1, 0:nz-1))
 	allocate(omega_p2(0:nr-1, 0:nz-1), View(nt))
 	
-	Ne = 3.0d11!reshape([real(8):: (0d0, i = 1, nr*nz)], [nr, nz]) !3d11
+	Ne = 3.0d11
 	call concentration(Ne, Ne)
-	nu = 1.0d6!1.0d6
+	nu = 1.0d6
 	
 	jz = 0.0d0
 	jr = 0.0d0
@@ -66,7 +65,7 @@ program wh3d
 
 	View = 0.0d0
 
-	call absorb_layer(f, sigma_0) !поглощающий слой проработать
+	call absorb_layer(f, sigma_0) 
 	call omega_psq(Ne, omega_p2)
 	call omega_c(B0z, omega_ce)
 
@@ -79,10 +78,8 @@ program wh3d
 	close(25)
 
 	!call exit(0)
-    !Пока просто формулы, нет набега фазы
+    
 	do it = 0, nt
-		!Bz(0, :) = Bz(0, :) - 4* dt * c * Ephi(1, :)/dr !регуляризация в нуле (см Chen1996)
-
 	call source(f, dt, dr, dz, Ra, it, r_source, z_source, jext)
 
 	!$omp parallel workshare
@@ -164,17 +161,9 @@ program wh3d
 		View(it) = Ephi(1, nint(real(nz, 8)/2))
 	end do
 
-	!call cpu_time(stopTime)
     call system_clock(int2)
  	 print *, 'Elapsed time, m : ',  (int2-int1)/1000/60 !((stopTime - startTime)/60.0d0)
 
-	!open(24, file = 'View.bin', action = 'write', form = 'unformatted')
-	!	write(24) nt
-	!	write(24) dt
-	!	write(24) View
-	!close(24)
-
-	!print * , max(real(jz), imag(jz))
 	open(22, file = 'duct.bin', action = 'write', form = 'unformatted')
 		write(22) nr
 		write(22) nz
@@ -211,7 +200,7 @@ contains
 		jext(:,:) = (0d0, 0d0)
 		tau = 5.0d0 / f 
 		sigmaR = 0.5d0
-		sigmaZ = 0.2d0 !разделить экспоненту R1**2/(2*sigmaR**2) с разными сигма
+		sigmaZ = 0.2d0 
 		k0 = 2*pi*f/c
 		do iz = 1, nz
 			do ir = 1, nr
@@ -267,7 +256,7 @@ contains
 		!$omp parallel do
 		do j = LBOUND(sigma, 2), UBOUND(sigma, 2)
 	   		do i = LBOUND(sigma, 1), isigma
-       	        sigma(nr-i+1, j) = sigmaMAX*((isigma-i)**3) ! 1d-6*
+       	        sigma(nr-i+1, j) = sigmaMAX*((isigma-i)**3) 
         	end do
 		end do
 		!$omp end parallel do
@@ -275,8 +264,7 @@ contains
 		!$omp parallel do
 		do j = LBOUND(sigma, 2), jsigma
 			do i = LBOUND(sigma, 1), UBOUND(sigma, 1)
-    	        !sigma(i, j) =  max(sigmaMAX*(jsigma-j)**3, sigma(i, j))!1d-6*
-    	    	sigma(i, nz-j+1) = max(sigmaMAX*(jsigma-j)**3, sigma(i, j))!sigma(i, j)
+    	    	sigma(i, nz-j+1) = max(sigmaMAX*(jsigma-j)**3, sigma(i, j))
     	   end do
     	end do
 		!$omp end parallel do
@@ -298,3 +286,4 @@ contains
     end subroutine 
 
 end program
+

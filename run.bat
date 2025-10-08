@@ -1,4 +1,4 @@
 @echo off
 echo  Running ...
-gfortran -O5 -fopenmp -o kol kol.f95  && .\kol.exe
+gfortran -O5 -fopenmp -o kolT kolT.f95  && .\kolT.exe
 echo DONE

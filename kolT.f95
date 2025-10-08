@@ -90,13 +90,13 @@ program wh3d
 	!$omp end parallel workshare
 
 	!$omp parallel do private(dBphi_dr, drBphi_dr, dEphi_dz, dEphi_dr, drEphi_dr, iz)
-        do iz=1, nz-1
+        do iz=1, nz-2
 			do ir = 0, nr-2
 				dBphi_dr = (Bphi(ir+1, iz) - Bphi(ir, iz) ) / dr
 				drBphi_dr = dBphi_dr + (Bphi(ir+1, iz)  + Bphi(ir, iz))/(2.0d0*(real(ir, 8)+0.5d0) *dr)
 
 				dEphi_dz = (Ephi(ir, iz+1) - Ephi(ir, iz)) / dz
-				dEphi_dr = (Ephi(ir+1, iz) - Ephi(ir, iz)) / dz
+				dEphi_dr = (Ephi(ir+1, iz) - Ephi(ir, iz)) / dr
 				drEphi_dr = (Ephi(ir+1, iz) + Ephi(ir, iz))/(2.0d0*(real(ir, 8)+0.5d0)*dr) + dEphi_dr
 
 				Ez(ir, iz) = (1-2*pi*dt*sigma_0(ir, iz))* Ez(ir, iz) /(1+2*pi*dt*sigma_0(ir, iz))  -&
@@ -296,4 +296,5 @@ contains
 		real(8), intent(out) :: omega_ce
 		omega_ce = e * B / me / c
     end subroutine 
+
 end program

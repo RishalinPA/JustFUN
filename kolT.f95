@@ -25,7 +25,7 @@ program wh3d
 	
 	!Из Куранта. В цилиндрических без зависимости от фи
 	
-	dt = 0.05d0 / c / (1.0d0 / dr**2 + 1.0d0 / dz**2)**0.5
+	dt = 0.9d0 / c / (1.0d0 / dr**2 + 1.0d0 / dz**2)**0.5
 	print *, 't_max = ', nt*dt, 'dt=', dt
 	!Сделать внешний ввод
 	allocate(Er(0:nr-1, 0:nz-1), Ephi(0:nr-1, 0:nz-1), Ez(0:nr-1, 0:nz-1), jext(0:nr-1, 0:nz-1))
@@ -83,7 +83,7 @@ program wh3d
 	call source(f, dt, dr, dz, Ra, it, r_source, z_source, jext)
 
 	!$omp parallel workshare
-	Ephi = Ephi + jext
+	jz = jz + jext
 	!$omp end parallel workshare
 
 	!$omp parallel do private(dBphi_dr, drBphi_dr, dEphi_dz, dEphi_dr, drEphi_dr, iz)
@@ -286,4 +286,5 @@ contains
     end subroutine 
 
 end program
+
 
